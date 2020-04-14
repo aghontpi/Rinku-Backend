@@ -20,6 +20,6 @@ $arrFailResp = [
     ]
 ];
 
-json_encode($arrFailResp);
+echo json_encode($arrFailResp);
 
 ?>
