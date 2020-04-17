@@ -1,13 +1,9 @@
 <?php
 
-@session_name("aghontpi");
-@session_start();
-
-
 /** 
  * response hardcoded for working with client side
 */
-
+ini_set("display_errors",1);
 $arrSuccessResp = [
     "response"=>"success",
     "content"=> [
@@ -25,8 +21,15 @@ $arrFailResp = [
     ]
 ];
 
-header('Access-Control-Allow-Origin: *');
-echo json_encode($arrFailResp);
+
+
+require_once "classes/request.php";
+header("Access-Control-Allow-Origin: *");
+header('Content-Type', 'application/json');
+$req = new \server\classes\request();
+//$req->handlePost();
+echo(json_encode($arrFailResp));
+
 
 ?>
 
