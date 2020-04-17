@@ -4,20 +4,20 @@
 class login {
     private $inputs = null;
     private $response = null;
-    // private $respSuccessTemplate = [
-    //     "response"=>"success",
-    //         "content"=> [
-    //             "user" => base64_encode("someVal"),
-    //             "loginTime"=> time(),
-    //             "otherParam"=> "..."
+    private $respSuccessTemplate = [
+        "response"=>"success",
+        "content"=> [
+            "user" => "",
+            "loginTime"=> "",
+            "otherParam"=> "..."
+        ]
+        ];
+    // private $repFailTemplate = [
+    //         "response"=>"error",
+    //         "errors"=>[
+    //             "errMsg"=>"Invalid credentials entered",
     //         ]
     //     ];
-    private $repFailTemplate = [
-            "response"=>"error",
-            "errors"=>[
-                "errMsg"=>"Invalid credentials entered",
-            ]
-        ];
 
 
     public function setInputData($content){
@@ -26,9 +26,15 @@ class login {
     }
 
 
-
     public function process(){
-        $this->response = $this->repFailTemplate;
+        $this->authenticate();
+    }
+
+    private function authenticate(){
+        $_SESSION["userId"] = "123";
+        $this->respSuccessTemplate['content']["user"] = base64_encode("asd");
+        $this->respSuccessTemplate['content']["loginTime"] = time();
+        $this->response = $this->respSuccessTemplate;
     }
 
     public function getResponse(){
