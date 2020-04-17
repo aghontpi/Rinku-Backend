@@ -1,4 +1,9 @@
 <?php
+
+@session_name("aghontpi");
+@session_start();
+
+
 /** 
  * response hardcoded for working with client side
 */
