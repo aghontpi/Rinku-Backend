@@ -31,9 +31,34 @@ class request extends utils implements Irequest{
     public function handleArgs(){
         if (empty($this->processBuffer) || empty($this->processBuffer['endPoint']))
             $this->throwBadRequest();
-        $this->module = $this->processBuffer["endPoint"];
+        $this->module = $this->sanitize($this->processBuffer["endPoint"]);
         $this->moduleData = $this->processBuffer["data"];
         $this->processBuffer = null;
+        return $this;
+    }
+
+    public function processReq(){
+        if(!$this->checkModule($this->module))
+            $this->throwBadRequest();
+        try {
+            $module = new $this->module();
+            $module->process();
+            $module->getResponse();
+        } catch(\Exception $e) {
+            die($e->getMessage());
+            //@todo handle exception and send error message
+        }
+        
+        
+    }
+
+    protected function checkModule($moduleName) : bool{
+        $moduleName .= ".php";
+        $moduleLocation = __DIR__."/../modules/".$moduleName;
+        if(!file_exists($moduleLocation))
+            return FALSE;
+        require_once($moduleLocation);
+        return TRUE;
     }
 }
 

@@ -36,6 +36,10 @@ abstract class utils implements Iutils{
         header($protocol .' 400 Bad Request');
         exit;
     }
+
+    public function sanitize($content){
+        return filter_var($content, FILTER_SANITIZE_STRING);
+    }
 }
 
 
