@@ -10,6 +10,7 @@ use server\classes\response;
 class request extends utils implements Irequest{
     private $module;
     private $moduleData;
+    private $processBuffer;
 
     public function __construct(){
         /* dont process options request */
@@ -20,10 +21,19 @@ class request extends utils implements Irequest{
     }
 
     public function handlePost(){
-        if($this->getRequestType() != "POST" || $this->getContentType() != "application/json")
-            return $this->throwError();
-        $parsedData =  $this->getRawData();
-        print_r($parsedData);
+        if($this->getRequestType() != "POST" || 
+                $this->getContentType() != "application/json")
+            $this->throwError();
+        $this->processBuffer =  $this->getRawData();
+        return $this;
+    }
+
+    public function handleArgs(){
+        if (empty($this->processBuffer) || empty($this->processBuffer['endPoint']))
+            $this->throwBadRequest();
+        $this->module = $this->processBuffer["endPoint"];
+        $this->moduleData = $this->processBuffer["data"];
+        $this->processBuffer = null;
     }
 }
 

@@ -1,5 +1,12 @@
 <?php
 
+if($_SERVER['REQUEST_METHOD'] == 'OPTIONS'){
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Headers: Content-Type, origin");
+    header("HTTP/1.1 200 ");
+    exit;
+}
+
 /** 
  * response hardcoded for working with client side
 */
@@ -24,11 +31,11 @@ $arrFailResp = [
 
 
 require_once "classes/request.php";
-header("Access-Control-Allow-Origin: *");
-header('Content-Type', 'application/json');
+// header("Access-Control-Allow-Origin: *");
+// header('Content-Type', 'application/json');
 $req = new \server\classes\request();
-//$req->handlePost();
-echo(json_encode($arrFailResp));
+$req->handlePost()
+    ->handleArgs();
 
 
 ?>

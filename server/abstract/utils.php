@@ -19,12 +19,22 @@ abstract class utils implements Iutils{
         return ($clientSideData) ?  $clientSideData : [];
     }
 
-    public function throwError() : int{
+    public function throwError() {
         session_destroy();
         $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? 
             $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header("Access-Control-Allow-Origin: *");
         header($protocol .' 405 Method Not Allowed');
-        return -1;
+        exit;
+    }
+
+    public function throwBadRequest() {
+        session_destroy();
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? 
+            $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header("Access-Control-Allow-Origin: *");
+        header($protocol .' 400 Bad Request');
+        exit;
     }
 }
 

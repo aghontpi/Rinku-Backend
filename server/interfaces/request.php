@@ -6,6 +6,8 @@ interface request{
 
     public function handlePost();
 
+    public function handleArgs();
+
 }
 
 
