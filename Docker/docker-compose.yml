@@ -29,3 +29,12 @@ services:
           - .mysql:/var/lib/mysql
           - ./mysql/dbinit:/docker-entrypoint-initdb.d
         restart: 'always'
+
+  adminer:
+      build: ./adminer
+      container_name: 'personal-cloud-adminer'
+      links:
+        - database
+      restart: 'always'
+      ports:
+        - "8080:8080"
