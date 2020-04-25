@@ -14,4 +14,4 @@ EXPOSE 80 9000
 # enable xdebug remote debug
 # && echo "xdebug.remote_enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
 #     && echo "xdebug.remote_autostart = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \ 
-#     && echo "xdebug.remote_host=192.168.1.33" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \ 
+#     && echo "xdebug.remote_host=192.168.43.126" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \ 
