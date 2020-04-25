@@ -43,17 +43,42 @@ class fileOperation implements module{
     }
 
     private function list(){  
-        $listing = [];
-        $item = [
-            "key"=>'idm.zip',
-            "size"=>1024,
-            "modified"=>time()
-        ];
-        array_push($listing, $item);
+            $list = $this->scanDirectory();
 
-        $this->respSuccessTemplate['content'] = json_encode($listing);
+            $this->respSuccessTemplate['content'] = json_encode($list);
 
-        $this->response =  $this->respSuccessTemplate;
+            $this->response =  $this->respSuccessTemplate;
+    }
+
+    private function scanDirectory(){
+        $listing = $this->scanDirRecursively(".");
+        // template for showing in client side
+        // $item = [
+        //     "key"=>'idm.zip',
+        //     "size"=>1024,
+        //     "modified"=>time()
+        // ];
+        return $listing;
+    }
+
+    private function scanDirRecursively($dir){
+        $items = [];
+        $dirIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+        foreach($dirIterator as $iteratorItem){
+            $fileName = $iteratorItem->getFilename();
+            if ($fileName == "." || $fileName == "..") { continue; }
+            $relativePath = $iteratorItem->getPathname();
+            if($relativePath[0] == "."){ $relativePath = ltrim($relativePath,".");}
+            $modifiedTime =$iteratorItem->getMTime();
+            $modifiedTime =  $modifiedTime * 1000;
+            $item =[
+                "key" =>  $relativePath,
+                "size" => $iteratorItem->getSize(),
+                "modified" => $modifiedTime
+            ];
+            array_push($items, $item);
+        }
+        return $items;
     }
 
     public function getResponse(){
