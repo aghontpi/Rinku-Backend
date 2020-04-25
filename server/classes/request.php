@@ -42,7 +42,7 @@ class request extends utils implements Irequest{
             $this->throwBadRequest();
         try {
             $module = new $this->module();
-            $module->setInputData($this->moduleData)
+            $module->setInputs($this->moduleData)
                 ->process()
                 ->getResponse();
         } catch(\Exception $e) {

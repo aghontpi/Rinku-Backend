@@ -2,7 +2,11 @@
 
 include_once __DIR__."/../classes/database.php";
 
-class login {
+include_once __DIR__."/../interfaces/module.php";
+
+use \server\interfaces\module;
+
+class login implements module {
     private $inputs = null;
     private $response = null;
     private $respSuccessTemplate = [
@@ -26,7 +30,7 @@ class login {
         $this->response = $this->repFailTemplate; // default to fail template
     }
 
-    public function setInputData($content){
+    public function setInputs($content){
         $this->inputs = $content;
         return $this;
     }
