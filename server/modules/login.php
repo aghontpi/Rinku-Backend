@@ -1,5 +1,6 @@
 <?php
 
+include_once __DIR__."/../classes/database.php";
 
 class login {
     private $inputs = null;
@@ -11,14 +12,19 @@ class login {
             "loginTime"=> "",
             "otherParam"=> "..."
         ]
+    ];
+    private static $userDetails;
+    private $repFailTemplate = [
+            "response"=>"error",
+            "errors"=>[
+                "errMsg"=>"Invalid credentials entered",
+            ]
         ];
-    // private $repFailTemplate = [
-    //         "response"=>"error",
-    //         "errors"=>[
-    //             "errMsg"=>"Invalid credentials entered",
-    //         ]
-    //     ];
 
+    public function __construct(){
+        $this->database = \server\classes\database::getConnection();
+        $this->response = $this->repFailTemplate; // default to fail template
+    }
 
     public function setInputData($content){
         $this->inputs = $content;
@@ -32,11 +38,48 @@ class login {
     }
 
     private function authenticate(){
-        $_SESSION["userId"] = "123";
-        $this->respSuccessTemplate['content']["user"] = base64_encode("asd");
-        $this->respSuccessTemplate['content']["loginTime"] = time();
-        $this->response = $this->respSuccessTemplate;
+        if(!$this->checkUserInDb() || !$this->checkUserPwdAndStatus()){
+            $this->response = $this->repFailTemplate;
+            return;
+        }
+        // set the session values, @todo: move this part to seperate function
+        if($timeUpdatedForUser = $this->updateTimeInforUser()){
+            $_SESSION["userId"] = self::$userDetails['user_id'];
+            $this->respSuccessTemplate['content']["user"] = base64_encode(self::$userDetails['user_id']);
+            $this->respSuccessTemplate['content']["loginTime"] =$timeUpdatedForUser;
+            $this->response = $this->respSuccessTemplate;
+        }
+        
     }
+
+    // update last login time
+    private function updateTimeInforUser(){
+        $time = time();
+        $timestamp = date("Y-m-d H:i:s", $time);
+        $preparedSql = $this->database->prepare(
+            "UPDATE user_details SET last_login_time = :utime WHERE user_id = :userid"
+        );
+        $preparedSql->execute([':userid'=>self::$userDetails['user_id'], ':utime'=>$timestamp]);
+        return ($preparedSql->rowCount() > 0)? $time: FALSE;
+    }
+
+    // check pwd & user status
+    private function checkUserPwdAndStatus(){
+        $preparedSql = $this->database->prepare(
+            "SELECT * FROM user_details WHERE user_name = :uname " . 
+            "AND email_id_status = 'Y' AND status = 'Y'"
+        );
+        $preparedSql->execute([':uname'=>$this->inputs['uname'][0]]);
+        self::$userDetails = $preparedSql->fetch(PDO::FETCH_ASSOC);
+        return password_verify($this->inputs["pword"][0], self::$userDetails['user_password']);
+    }
+
+    // user not present
+    private function checkUserInDb(){
+        $preparedSql = $this->database->prepare("SELECT 1 FROM `user_details` WHERE `user_name` = :uname");
+        $preparedSql->execute([':uname'=>$this->inputs['uname'][0]]);
+        return ($preparedSql->rowCount() > 0);
+    } 
 
     public function getResponse(){
         echo json_encode($this->response);
