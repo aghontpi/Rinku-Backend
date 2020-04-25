@@ -42,8 +42,9 @@ class request extends utils implements Irequest{
             $this->throwBadRequest();
         try {
             $module = new $this->module();
-            $module->process();
-            $module->getResponse();
+            $module->setInputData($this->moduleData)
+                ->process()
+                ->getResponse();
         } catch(\Exception $e) {
             die($e->getMessage());
             //@todo handle exception and send error message

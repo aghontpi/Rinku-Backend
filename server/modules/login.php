@@ -28,6 +28,7 @@ class login {
 
     public function process(){
         $this->authenticate();
+        return $this;
     }
 
     private function authenticate(){
