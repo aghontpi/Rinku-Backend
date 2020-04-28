@@ -50,6 +50,7 @@ class login implements module {
         if($timeUpdatedForUser = $this->updateTimeInforUser()){
             $_SESSION["userId"] = self::$userDetails['user_id'];
             $this->respSuccessTemplate['content']["user"] = base64_encode(self::$userDetails['user_id']);
+            $this->respSuccessTemplate['content']["nick"] =self::$userDetails['user_nick_name'];
             $this->respSuccessTemplate['content']["loginTime"] =$timeUpdatedForUser;
             $this->response = $this->respSuccessTemplate;
         }
