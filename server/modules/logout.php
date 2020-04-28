@@ -1,29 +1,9 @@
 <?php
 
-include_once __DIR__."/../interfaces/module.php";
+include_once __DIR__."/../abstract/module.php";
 
-use \server\interfaces\module;
-
-class logout implements module{
-
-    private $response;
-    private $respSuccessTemplate = [
-        "response"=>"success",
-        "content"=> [
-            []
-        ]
-    ];
-    private $repFailTemplate = [
-            "response"=>"error",
-            "errors"=>[
-                "errMsg"=>"...",
-            ]
-        ];
-
-    public function setInputs($content){
-        $this->inputs = $content;
-        return $this;
-    }
+use \server\abstracts\module;
+class logout extends module {
 
     public function process(){
         $this->response = $this->respSuccessTemplate;

@@ -1,35 +1,12 @@
 <?php
 
-include_once __DIR__."/../interfaces/module.php";
+include_once __DIR__."/../abstract/module.php";
 
-use \server\interfaces\module;
+use \server\abstracts\module;
 
-class fileOperation implements module{
+class fileOperation extends module{
 
     private $fileList;
-    private $inputs;
-    private $response;
-    private $respSuccessTemplate = [
-        "response"=>"success",
-        "content"=> [
-            []
-        ]
-    ];
-    private $repFailTemplate = [
-            "response"=>"error",
-            "errors"=>[
-                "errMsg"=>"operation not valid",
-            ]
-        ];
-
-    public function __construct(){
-        
-    }
-
-    public function setInputs($content){
-        $this->inputs = $content;
-        return $this;
-    }
 
     public function process(){
         switch($this->inputs['operation']){

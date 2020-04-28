@@ -1,40 +1,20 @@
 <?php
 
-include_once __DIR__."/../classes/database.php";
+include_once __DIR__."/../abstract/module.php";
 
-include_once __DIR__."/../interfaces/module.php";
+use \server\abstracts\module;
 
-use \server\interfaces\module;
-
-class login implements module {
-    private $inputs = null;
-    private $response = null;
-    private $respSuccessTemplate = [
-        "response"=>"success",
-        "content"=> [
-            "user" => "",
-            "loginTime"=> "",
-            "otherParam"=> "..."
-        ]
-    ];
+class login extends module {
     private static $userDetails;
-    private $repFailTemplate = [
-            "response"=>"error",
-            "errors"=>[
-                "errMsg"=>"Invalid credentials entered",
-            ]
-        ];
 
     public function __construct(){
-        $this->database = \server\classes\database::getConnection();
-        $this->response = $this->repFailTemplate; // default to fail template
+        parent::__construct();
+        // default to fail template
+        $this->repFailTemplate["errors"] = [
+            "errMsg"=>"Invalid credentials entered",
+        ];
+        $this->response = $this->repFailTemplate;
     }
-
-    public function setInputs($content){
-        $this->inputs = $content;
-        return $this;
-    }
-
 
     public function process(){
         $this->authenticate();
