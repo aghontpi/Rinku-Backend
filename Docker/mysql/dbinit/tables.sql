@@ -18,3 +18,10 @@ CHANGE `last_login_time` `last_login_time` timestamp NOT NULL AFTER `time_zone`;
 
 INSERT INTO `user_details` (`user_id`, `user_name`, `user_password`, `email_id`, `email_id_status`, `status`, `time_zone`, `last_login_time`)
 VALUES ('0', 'testuser', '$2y$10$vWaHUXBZbc/JEursJrx26u0xPSemK5bQ/E3x.SrJ9HRflQeLEfbjW', 'testuser@testsomedomain.com', 1, 1, 'not set', now());
+
+ALTER TABLE `user_details`
+ADD `user_nick_name` varchar(64) COLLATE 'latin1_swedish_ci' NOT NULL AFTER `user_name`;
+
+UPDATE `user_details` SET
+`user_nick_name` = 'bluepie',
+WHERE `user_id` = '1';
