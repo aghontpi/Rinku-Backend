@@ -10,8 +10,9 @@ class response extends utils implements Iresponse{
  
     /* handle pre options erquest */
     public static function handleOptions() {
-        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Origin: http://localhost:3000");
         header("Access-Control-Allow-Headers: Content-Type, origin");
+        header("Access-Control-Allow-Credentials: true");
         header("HTTP/1.1 200 ");
         exit;
     }
