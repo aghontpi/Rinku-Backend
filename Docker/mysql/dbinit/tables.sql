@@ -25,3 +25,23 @@ ADD `user_nick_name` varchar(64) COLLATE 'latin1_swedish_ci' NOT NULL AFTER `use
 UPDATE `user_details` SET
 `user_nick_name` = 'bluepie',
 WHERE `user_id` = '1';
+
+
+CREATE TABLE `dowload_details` (
+  `download_id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `download_name` varchar(64) NOT NULL,
+  `path_of_file` varchar(255) NOT NULL,
+  `status` enum('Y','N') NOT NULL,
+  `create_by` int NOT NULL,
+  `updated_by` int NOT NULL,
+  `create_timestamp` timestamp NOT NULL DEFAULT NOW() ,
+  `update_timestamp` timestamp NULL ON UPDATE CURRENT_TIMESTAMP
+) ENGINE='InnoDB';
+
+CREATE TABLE `download_log` (
+  `download_log_id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `ip_addr` varchar(64) NOT NULL,
+  `user_agent` varchar(255) NOT NULL,
+  `downloaded_by` int NOT NULL,
+  `requested_time` timestamp NOT NULL DEFAULT NOW() ON UPDATE CURRENT_TIMESTAMP
+) ENGINE='InnoDB';
