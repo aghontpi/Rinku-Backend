@@ -45,3 +45,9 @@ CREATE TABLE `download_log` (
   `downloaded_by` int NOT NULL,
   `requested_time` timestamp NOT NULL DEFAULT NOW() ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE='InnoDB';
+
+INSERT INTO `dowload_details` (`download_id`, `download_name`, `path_of_file`, `status`, `create_by`, `updated_by`, `create_timestamp`, `update_timestamp`)
+VALUES ('0', '4c7c3f0893b92962', '/var/www/html/index.php', 1, '1', '0', now(), NULL);
+
+ALTER TABLE `dowload_details`
+RENAME TO `download_details`;
