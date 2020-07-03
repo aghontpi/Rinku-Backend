@@ -29,6 +29,7 @@ class request extends utils implements Irequest{
             ){
                 unset($_SESSION['filename']);
                 $mimeType = mime_content_type($filename);
+                header('Content-Type: '.$mimeType);
                 header("Content-disposition: attachment; filename=\"" . basename($filename) . "\""); 
                 readfile($filename);
                 exit();
