@@ -9,12 +9,13 @@ class download extends module{
     public function __construct(){
         parent::__construct();
         $this->repFailTemplate["errors"] = [
-            "errMsg"=>"file is not valid",
+            "errMsg"=>"Invalid Download Link",
         ];
     }
 
     public function process(){
         $fileId  = $this->inputs['fileid'];
+        $this->response = $this->repFailTemplate;
         $prepedSql = $this->database->prepare(
             "SELECT * FROM download_details WHERE download_name = :downloadName"
         );
