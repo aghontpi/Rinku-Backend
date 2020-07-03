@@ -20,6 +20,23 @@ class request extends utils implements Irequest{
         @session_start();
     }
 
+    public function handleGet(){
+        /* download the file by reading the file */
+        if( $this->getRequestType() == "GET"
+            && isset($_SESSION['location'])
+            && ($filename =  $_SESSION['location']) != ""
+            && file_exists($filename)
+            ){
+                unset($_SESSION['filename']);
+                $mimeType = mime_content_type($filename);
+                header("Content-disposition: attachment; filename=\"" . basename($filename) . "\""); 
+                readfile($filename);
+                exit();
+            }
+        
+        return $this;
+    }
+
     public function handlePost(){
         if($this->getRequestType() != "POST" || 
                 $this->getContentType() != "application/json")
