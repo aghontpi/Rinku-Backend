@@ -11,6 +11,9 @@ class request extends utils implements Irequest{
     private $module;
     private $moduleData;
     private $processBuffer;
+    private $modulesWithoutAuthorization =[
+        'download.php'
+    ];
 
     public function __construct(){
         /* dont process options request */
@@ -74,10 +77,17 @@ class request extends utils implements Irequest{
     protected function checkModule($moduleName) : bool{
         $moduleName .= ".php";
         $moduleLocation = __DIR__."/../modules/".$moduleName;
-        if(!file_exists($moduleLocation))
+        if(!file_exists($moduleLocation)
+                && !$this->checkPermission($moduleName))
             return FALSE;
         require_once($moduleLocation);
         return TRUE;
+    }
+
+    private function checkPermission($moduleNmae) : bool{
+        if(in_array($moduleName,$this->modulesWithoutAuthorization))
+            return true;
+        return !empty($_SESSION['userId']);
     }
 }
 
