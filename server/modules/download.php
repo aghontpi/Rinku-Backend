@@ -13,12 +13,25 @@ class download extends module{
         ];
         $this->downloadErrMsg = "something went wrong,"
             ." please contact site admin";
+        $this->queryFileErrMsg = "Sorry, you have to be"
+            ." logged in to perform this action";
     }
 
     public function process(){
         $fileId  = $this->inputs['fileid'];
         $action = $this->inputs['action'];
+        $filepath = $this->inputs['filepath'];
         $downloadUrl = NULL;
+        // if filepath query request change error message.
+        if(!empty($filepath)){
+            $filepath = download::path . $filepath;
+            $this->repFailTemplate["errors"]['errMsg'] = $this->queryFileErrMsg;
+            $this->response = $this->repFailTemplate;
+            // only logged in users must be able to do query,
+            if(empty($_SESSION['userId']))
+                return $this;
+            return $this->queryFilePath($filepath);
+        }
         // if download request, change error message.
         if(!empty($action)) {
             $this->repFailTemplate["errors"]['errMsg'] = $this->downloadErrMsg;
@@ -45,6 +58,25 @@ class download extends module{
             $this->response = $this->respSuccessTemplate;
         }
         return $this;
+    }
+
+    private function queryFilePath($filepath){
+        $preparedSql = $this->database->prepare(
+            "SELECT * FROM download_details WHERE path_of_file = :filepath 
+            ORDER BY download_id DESC LIMIT 1"
+        );
+        $preparedSql->execute([":filepath"=>$filepath]);
+        if ($preparedSql->rowCount() == 1){
+            $fileDetailsDB = $preparedSql->fetch(PDO::FETCH_ASSOC);
+            $fileInfo['downloadName'] = $fileDetailsDB['download_name'];
+            $this->respSuccessTemplate["content"]["file"] = $fileInfo;
+        } else {
+            $this->respSuccessTemplate["content"]["file"] = 
+               "id not yet generated";
+        }
+        $this->response = $this->respSuccessTemplate;
+        return $this;
+         
     }
 
     public function getResponse(){
