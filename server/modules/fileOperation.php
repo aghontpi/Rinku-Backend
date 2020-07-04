@@ -28,7 +28,7 @@ class fileOperation extends module{
     }
 
     private function scanDirectory(){
-        $listing = $this->scanDirRecursively(".");
+        $listing = $this->scanDirRecursively(fileOperation::path);
         // template for showing in client side
         // $item = [
         //     "key"=>'idm.zip',

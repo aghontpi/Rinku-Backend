@@ -1,11 +1,13 @@
 <?php
 
 namespace server\abstracts;
+include_once __DIR__."/../interfaces/config.php";
 include_once __DIR__."/../interfaces/module.php";
 include_once __DIR__."/../classes/database.php";
 use \server\interfaces\module as Imodule;
+use \server\interfaces\config as Iconfig;
 
-abstract class module implements Imodule{
+abstract class module implements Imodule,Iconfig{
 
     protected $inputs;
     protected $response;
