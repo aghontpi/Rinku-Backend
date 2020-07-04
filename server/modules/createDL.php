@@ -16,12 +16,31 @@ class createDL extends module{
     }
 
     public function process(){
+        // we combine the path with configured path.
         $file  = createDL::path . $this->inputs['file'];
         if(!file_exists($file))
             return $this;
-        $sql = "INSERT INTO `dowload_details` (`download_id`, `download_name`, `path_of_file`, `status`, `create_by`, `updated_by`, `create_timestamp`, `update_timestamp`)
-            VALUES ('0', '4c7c3f0893b92962', '/var/www/html/index.php', 1, '1', '0', now(), NULL);";
-        $this->respSuccessTemplate["content"]["downloadId"] = "345345345";
+        $preparedSql = $this->database->prepare(
+            "INSERT INTO 
+                    `download_details` 
+                (`download_id`, `download_name`, `path_of_file`, `status`, `create_by`,
+                `updated_by`, `create_timestamp`, `update_timestamp`)
+            VALUES 
+                ('0', :download_name, :file_path, 1, :create_user_id, 0, now(), NULL);"
+        );
+        $insertSql = [
+            "download_name" => bin2hex(random_bytes(4)),
+            "file_path" => $file,
+            "create_user_id" => $_SESSION['userId']
+        ];
+        //@todo check if the download_name is already present in database, regenerate if 
+        // already present.
+        $status = $preparedSql->execute(
+            $insertSql
+        );
+        if(!$status)
+            return $this;
+        $this->respSuccessTemplate["content"]["downloadId"] = $insertSql['download_name'];
         $this->respSuccessTemplate["content"]["Msg"] = "link was Created";
         $this->response = $this->respSuccessTemplate;
         return $this;
