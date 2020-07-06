@@ -24,9 +24,9 @@ class managelinks extends module{
 
     private function queryFiles($limit){
         // validate limit from client side
-        if($limit != 10) {
+        if($limit >= 10000) {
             $this->repFailTemplate["errors"]['errMsg']
-                = "sorry, you are only allowed to query 10";
+                = "sorry, you are only allowed to query untill 10000";
             $this->response = $this->repFailTemplate;
             return $this;
         }
@@ -48,6 +48,10 @@ class managelinks extends module{
             $this->respSuccessTemplate["content"]["list"] = 
                 json_encode($linksSelect);
             $this->response = $this->respSuccessTemplate;
+        } else {
+            $this->repFailTemplate["errors"]['errMsg']
+            = "sorry, End of the list reached";
+        $this->response = $this->repFailTemplate;
         }
         return $this;
     }
