@@ -53,7 +53,9 @@ class download extends module{
             $fileInfo["filename"] = basename($fileDetailsDB['path_of_file']);
             $fileInfo["filesize"] = filesize($fileDetailsDB['path_of_file']);
             /* if the post req is download action, set the download url */
-            !empty($action) && $fileInfo['downloadUrl'] = $downloadUrl;
+            !empty($action) 
+                && $this->addDownloadLog($fileDetailsDB['download_id']) 
+                && $fileInfo['downloadUrl'] = $downloadUrl;
             $this->respSuccessTemplate["content"]["file"] = $fileInfo;
             $this->response = $this->respSuccessTemplate;
         }
@@ -77,6 +79,25 @@ class download extends module{
         $this->response = $this->respSuccessTemplate;
         return $this;
          
+    }
+
+    private function addDownloadLog($downloadDetailsId){
+        $preparedSql = $this->database->prepare("
+            INSERT INTO 
+                download_log(download_details_id, ip_addr, user_agent, downloaded_by)
+            VALUES
+                (:dd_id,:ip,:ua,:user)
+        ");
+        $user = !empty($_SESSION['userId']) 
+            ? $_SESSION['userId'] 
+            : 0 ;
+        $preparedSql->execute([
+            "dd_id"=>$downloadDetailsId,
+            "ip"=>$_SERVER['REMOTE_ADDR'],
+            "ua"=>$_SERVER['HTTP_USER_AGENT'],
+            "user"=>$user
+        ]);
+        return true;
     }
 
     public function getResponse(){
