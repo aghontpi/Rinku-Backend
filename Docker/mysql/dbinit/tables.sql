@@ -51,3 +51,6 @@ VALUES ('0', '4c7c3f0893b92962', '/var/www/html/index.php', 1, '1', '0', now(), 
 
 ALTER TABLE `dowload_details`
 RENAME TO `download_details`;
+
+ALTER TABLE `download_log`
+ADD `download_details_id` int(11) NOT NULL AFTER `download_log_id`;
