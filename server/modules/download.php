@@ -42,7 +42,8 @@ class download extends module{
         }
         $this->response = $this->repFailTemplate;
         $prepedSql = $this->database->prepare(
-            "SELECT * FROM download_details WHERE download_name = :downloadName"
+            "SELECT * FROM download_details WHERE download_name = :downloadName
+            AND status = 'Y'"
         );
         $prepedSql->execute([':downloadName'=>$fileId]);
         if ($prepedSql->rowCount() == 1){
