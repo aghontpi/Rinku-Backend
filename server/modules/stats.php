@@ -4,7 +4,7 @@ include_once __DIR__."/../abstract/module.php";
 
 use \server\abstracts\module;
 
-class managelinks extends module{
+class stats extends module{
 
     public function __construct(){
         parent::__construct();
@@ -38,8 +38,8 @@ class managelinks extends module{
             GROUP BY 
                 dl.download_details_id 
             ORDER BY 
-                download_count 
-            DESC"
+                downloads DESC
+            LIMIT 10"
         );
         if($preparedSql->execute() && $preparedSql->rowCount()>0){
             $statusResult = $preparedSql->fetchAll(PDO::FETCH_ASSOC);
