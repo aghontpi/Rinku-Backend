@@ -18,6 +18,12 @@ class managelinks extends module{
         $limit = $this->inputs['limit'];
         if (!empty($limit))
             return $this->queryFiles(($limit));
+        $id = $this->inputs['id'];
+        $status = $this->inputs['update'];
+        // restricted to only two values
+        if(!empty($id) && !empty($status) && in_array($status,['Y','N'])){
+            return $this->updateDownload($id,$status);
+        }
         return $this;
 
     }
@@ -54,6 +60,28 @@ class managelinks extends module{
         $this->response = $this->repFailTemplate;
         }
         return $this;
+    }
+
+    private function updateDownload($id,$status){
+        $preparedSql = $this->database->prepare("
+            UPDATE 
+                download_details
+            SET
+                status = :status
+            WHERE 
+                download_name = :id 
+        ");
+        if($preparedSql->execute(['status'=>$status, 'id'=>$id])){
+            $this->respSuccessTemplate["content"]["status"]
+                 = "item updated";
+            $this->response = $this->respSuccessTemplate;
+        } else {
+            $this->repFailTemplate["errors"]['errMsg']
+            = "sorry, can not update the item";
+            $this->response = $this->repFailTemplate;
+        }
+        return $this;
+
     }
 
     public function getResponse(){
