@@ -23,7 +23,8 @@ abstract class utils implements Iutils{
         session_destroy();
         $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? 
             $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-        header("Access-Control-Allow-Origin: *");
+        http_response_code(405);
+        $this->setDevelopmentHeaders();
         header($protocol .' 405 Method Not Allowed');
         exit;
     }
@@ -32,9 +33,16 @@ abstract class utils implements Iutils{
         session_destroy();
         $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? 
             $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-        header("Access-Control-Allow-Origin: *");
-        header($protocol .' 400 Bad Request');
+        http_response_code(400);
+        $this->setDevelopmentHeaders();
+        header($protocol .' 400 Bad Request');        
         exit;
+    }
+
+    public function setDevelopmentHeaders(){
+        header("Access-Control-Allow-Origin: http://localhost:3000");
+        header("Access-Control-Allow-Credentials: true");
+        return $this;
     }
 
     public function sanitize($content){

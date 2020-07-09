@@ -12,7 +12,7 @@ class request extends utils implements Irequest{
     private $moduleData;
     private $processBuffer;
     private $modulesWithoutAuthorization =[
-        'download.php'
+        'download.php','login.php'
     ];
 
     public function __construct(){
@@ -59,9 +59,12 @@ class request extends utils implements Irequest{
     }
 
     public function processReq(){
+        ($_SERVER['HTTP_ORIGIN'] === "http://localhost:3000") &&
+            $this->setDevelopmentHeaders();
         if(!$this->checkModule($this->module))
             $this->throwBadRequest();
         try {
+            $this->setDevelopmentHeaders();
             $module = new $this->module();
             $module->setInputs($this->moduleData)
                 ->process()
@@ -78,16 +81,16 @@ class request extends utils implements Irequest{
         $moduleName .= ".php";
         $moduleLocation = __DIR__."/../modules/".$moduleName;
         if(!file_exists($moduleLocation)
-                && !$this->checkPermission($moduleName))
+                || $this->checkPermission($moduleName))
             return FALSE;
         require_once($moduleLocation);
         return TRUE;
     }
 
-    private function checkPermission($moduleNmae) : bool{
+    private function checkPermission($moduleName) : bool{
         if(in_array($moduleName,$this->modulesWithoutAuthorization))
-            return true;
-        return !empty($_SESSION['userId']);
+            return false;
+        return empty($_SESSION['userId']);
     }
 }
 
