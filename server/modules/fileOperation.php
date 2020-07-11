@@ -27,20 +27,26 @@ class fileOperation extends module{
             $this->response =  $this->respSuccessTemplate;
     }
 
+    /**
+     * scanDirectory function
+     *
+     * @return array ex: [["key"=>'idm.zip',"size"=>1024,"modified"=>time()],..] 
+     */
     private function scanDirectory(){
         $listing = $this->scanDirRecursively(fileOperation::path);
-        // template for showing in client side
-        // $item = [
-        //     "key"=>'idm.zip',
-        //     "size"=>1024,
-        //     "modified"=>time()
-        // ];
         return $listing;
     }
 
+    
+
     private function scanDirRecursively($dir){
         $items = [];
-        $dirIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+        $dirIterator = new RecursiveIteratorIterator(
+            new ReadableFilter(
+                new RecursiveDirectoryIterator($dir)
+            )
+        );
+        
         foreach($dirIterator as $iteratorItem){
             $fileName = $iteratorItem->getFilename();
             if ($fileName == "." || $fileName == "..") { continue; }
@@ -63,4 +69,10 @@ class fileOperation extends module{
     }
 }
 
+// custom filter to ignore unreadable files.
+class ReadableFilter extends RecursiveFilterIterator{
+    public function accept(){
+            return $this->current()->isReadable();
+    }
+}
 ?>
