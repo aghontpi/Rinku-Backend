@@ -1,6 +1,7 @@
 <?php
 
 include_once __DIR__."/../abstract/module.php";
+require_once(__DIR__.'/../lib/autoload.php');
 
 use \server\abstracts\module;
 
@@ -22,6 +23,18 @@ class login extends module {
     }
 
     private function authenticate(){
+        // even though captcha is disable in server, client will
+        // still been shown recaptcha during login, but its not
+        // validated in server, it is only validated if the config
+        // is set to 'enable'
+        if(login::captcha === "enable" && !$this->verifyCaptcha()){
+            //captcha verify failed, stop proceeding give response
+            $this->repFailTemplate["errors"]["errMsg"] = 
+                "Capcha verify failed, kindly try again";
+            $this->response = $this->repFailTemplate;
+            return;
+        }
+
         if(!$this->checkUserInDb() || !$this->checkUserPwdAndStatus()){
             $this->response = $this->repFailTemplate;
             return;
@@ -65,6 +78,27 @@ class login extends module {
         $preparedSql->execute([':uname'=>$this->inputs['uname'][0]]);
         return ($preparedSql->rowCount() > 0);
     } 
+
+    private function verifyCaptcha(){
+         // validate captcha with google's api
+         try{
+            $reCaptchaInstance = new \ReCaptcha\ReCaptcha(login::secret);
+        } catch(Error $e){ 
+            throw new Exception($e->getMessage());
+            error_log("permission not given for 'lib' folder");
+            return $this; // return with recaptcha error
+        }
+        
+        // set domain-name in config, (i.e) server where hosted
+        // ignore the client ip, since we don't want to hassle with
+        // determining their real ip
+        $response = $reCaptchaInstance
+                        ->setExpectedHostname(login::domain)
+                        ->setChallengeTimeout(50)
+                        ->verify($this->inputs['captcha']);
+        // for debugging use $response->getErrorCodes();
+        return $response->isSuccess();
+    }
 
     public function getResponse(){
         echo json_encode($this->response);
