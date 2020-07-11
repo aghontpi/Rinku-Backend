@@ -3,7 +3,7 @@
 include_once __DIR__."/../abstract/module.php";
 
 use \server\abstracts\module;
-
+require_once(__DIR__.'/../lib/autoload.php');
 class download extends module{
 
     public function __construct(){
@@ -15,12 +15,15 @@ class download extends module{
             ." please contact site admin";
         $this->queryFileErrMsg = "Sorry, you have to be"
             ." logged in to perform this action";
+        $this->reCaptchaError = "Captcha error, kindly try again";
     }
 
     public function process(){
         $fileId  = $this->inputs['fileid'];
         $action = $this->inputs['action'];
         $filepath = $this->inputs['filepath'];
+        $captchaStatus = download::captcha === "enable";
+        $captcha = $this->inputs['captcha'];
         $downloadUrl = NULL;
         // if filepath query request change error message.
         if(!empty($filepath)){
@@ -32,15 +35,40 @@ class download extends module{
                 return $this;
             return $this->queryFilePath($filepath);
         }
-        // if download request, change error message.
+        // if download request, change error message && check captcha
         if(!empty($action)) {
             $this->repFailTemplate["errors"]['errMsg'] = $this->downloadErrMsg;
             $origin = $_SERVER['HTTP_ORIGIN'];
             /* for local environment remove the port */
             $origin = str_replace(":3000",'',$origin);
             $downloadUrl = $origin ."/".$_SERVER['PHP_SELF'];
+            // for download request, we validate captcha
+            if($captchaStatus && empty($captcha)){
+                $this->repFailTemplate = $this->reCaptchaError;
+            } else {
+                // validate captcha with google's api
+                try{
+                    $reCaptchaInstance = new \ReCaptcha\ReCaptcha(download::captcha);
+                } catch(Error $e){ 
+                    error_log("permission not given for 'lib' folder");
+                    return $this; // return with recaptcha error
+                }
+                
+                // set domain-name in config, (i.e) server where hosted
+                // ignore the client ip, since we don't want to hassle with
+                // determining their real ip
+                $response = $reCaptchaInstance
+                                ->setExpectedHostname(download::domain)
+                                ->setChallengeTimeout(50)
+                                ->verify($captcha);
+                // for debugging use $response->getErrorCodes();
+                $response->isSuccess() ? $captcha = "verified" : "errors";
+            }
+                
         }
         $this->response = $this->repFailTemplate;
+        // if captcha enabled and there is no-captcha in the download request, stop the request
+        if(!empty($action) && $captchaStatus && empty($captcha) && $captcha !== "verified"){ return $this; }
         $prepedSql = $this->database->prepare(
             "SELECT * FROM download_details WHERE download_name = :downloadName
             AND status = 'Y'"
@@ -53,6 +81,8 @@ class download extends module{
             //@todo if file not found in path to file, return error
             $fileInfo["filename"] = basename($fileDetailsDB['path_of_file']);
             $fileInfo["filesize"] = filesize($fileDetailsDB['path_of_file']);
+            // send the captcha config state to client to enable/disable
+            $fileInfo["captcha"] = download::captcha;
             /* if the post req is download action, set the download url */
             !empty($action) 
                 && $this->addDownloadLog($fileDetailsDB['download_id']) 
