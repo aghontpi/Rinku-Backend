@@ -4,8 +4,6 @@
 
 [![release][badge]][release link] [![license][license-badge]][license file]
 
-https://img.shields.io/github/v/release/Gopinath001/Rinku-Backend?include_prereleases&style=flat-square
-
 [license-badge]: https://img.shields.io/github/license/Gopinath001/Rinku-Backend?style=flat-square
 [license file]: https://github.com/Gopinath001/Rinku-Backend/blob/master/LICENSE
 [badge]: https://img.shields.io/github/v/release/Gopinath001/Rinku-Backend?include_prereleases&style=flat-square
