@@ -2,6 +2,16 @@
 
 > Create/manage download links for filesystems, Re-captcha, analytics,& download log for downloaded files,
 
+[![release][badge]][release link] [![license][license-badge]][license file]
+
+https://img.shields.io/github/v/release/Gopinath001/Rinku-Backend?include_prereleases&style=flat-square
+
+[license-badge]: https://img.shields.io/github/license/Gopinath001/Rinku-Backend?style=flat-square
+[license file]: https://github.com/Gopinath001/Rinku-Backend/blob/master/LICENSE
+[badge]: https://img.shields.io/github/v/release/Gopinath001/Rinku-Backend?include_prereleases&style=flat-square
+[release link]: https://github.com/Gopinath001/Rinku-Backend/releases
+
+
 ## Features
 
 - Create download link for any files
@@ -10,6 +20,8 @@
 - Get analytics of the download statistics
 - Includes google Recaptcha (configurable, can be turned off/on)
 - Get log of download files
+
+## checkout the [FrontEnd](https://github.com/Gopinath001/Rinku-Frontend) written in React 
 
 ## Built with
 
@@ -59,7 +71,7 @@ create mysql database, import the following file
 
 Docker/mysql/dbinit/tables.sql
 
-# credentials for default user
+# credentials for default user to login
 # username: testuser
 # password: 123456
 
