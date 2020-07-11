@@ -2,22 +2,22 @@ version : "3.7"
 
 services:
   server:
-        build: ./php
+        build: ./Docker/php
         ports:
           - "80:80"
-        container_name: 'personal-cloud-php'
+        container_name: 'rinku-server'
         links: 
           - database
         volumes:
           - type: bind
-            source: /home/blupie/projects/personal-cloud/personal-cloud/server
+            source: .
             target: /var/www/html
         restart: 'no'
         
   database:
-        build: ./mysql
+        build: ./Docker/mysql
         command: mysqld --default-authentication-plugin=mysql_native_password 
-        container_name: 'personal-cloud-mysql'
+        container_name: 'rinku-database'
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: backend_db
@@ -31,8 +31,8 @@ services:
         restart: 'no'
 
   adminer:
-      build: ./adminer
-      container_name: 'personal-cloud-adminer'
+      build: ./Docker/adminer
+      container_name: 'rinku-adminer'
       links:
         - database
       restart: 'no'
