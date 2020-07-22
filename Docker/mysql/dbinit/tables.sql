@@ -23,7 +23,7 @@ ALTER TABLE `user_details`
 ADD `user_nick_name` varchar(64) COLLATE 'latin1_swedish_ci' NOT NULL AFTER `user_name`;
 
 UPDATE `user_details` SET
-`user_nick_name` = 'bluepie',
+`user_nick_name` = 'bluepie'
 WHERE `user_id` = '1';
 
 
