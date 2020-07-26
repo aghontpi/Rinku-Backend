@@ -24,7 +24,7 @@ if($_SERVER['REQUEST_METHOD'] == 'OPTIONS'){
     exit;
 }
 
-ini_set("display_errors",1);
+ini_set("display_errors",0);
 
 require_once "classes/request.php";
 
