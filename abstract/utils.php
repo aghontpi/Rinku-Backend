@@ -24,7 +24,7 @@ abstract class utils implements Iutils{
         $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? 
             $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
         http_response_code(405);
-        $this->setDevelopmentHeaders();
+        $this->setCorsHeaders();
         header($protocol .' 405 Method Not Allowed');
         exit;
     }
@@ -34,13 +34,13 @@ abstract class utils implements Iutils{
         $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? 
             $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
         http_response_code(400);
-        $this->setDevelopmentHeaders();
+        $this->setCorsHeaders();
         header($protocol .' 400 Bad Request');        
         exit;
     }
 
-    public function setDevelopmentHeaders(){
-        header("Access-Control-Allow-Origin: http://localhost:3000");
+    public function setCorsHeaders(){
+        header("Access-Control-Allow-Origin: " . $_SERVER['cors']['Access-Control-Allow-Origin'] );
         header("Access-Control-Allow-Credentials: true");
         return $this;
     }

@@ -59,10 +59,9 @@ class request extends utils implements Irequest{
     }
 
     public function processReq(){
-        ($_SERVER['HTTP_ORIGIN'] === "http://localhost:3000") &&
-            $this->setDevelopmentHeaders();
         if(!$this->checkModule($this->module))
             $this->throwBadRequest();
+        $this->setCorsHeaders();
         try {
             $module = new $this->module();
             $module->setInputs($this->moduleData)
