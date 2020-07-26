@@ -64,7 +64,6 @@ class request extends utils implements Irequest{
         if(!$this->checkModule($this->module))
             $this->throwBadRequest();
         try {
-            $this->setDevelopmentHeaders();
             $module = new $this->module();
             $module->setInputs($this->moduleData)
                 ->process()
