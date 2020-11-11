@@ -4,10 +4,10 @@
 
 [![release][badge]][release link] [![license][license-badge]][license file]
 
-[license-badge]: https://img.shields.io/github/license/Gopinath001/Rinku-Backend?style=flat-square
-[license file]: https://github.com/Gopinath001/Rinku-Backend/blob/master/LICENSE
-[badge]: https://img.shields.io/github/v/release/Gopinath001/Rinku-Backend?include_prereleases&style=flat-square
-[release link]: https://github.com/Gopinath001/Rinku-Backend/releases
+[license-badge]: https://img.shields.io/github/license/aghontpi/Rinku-Backend?style=flat-square
+[license file]: https://github.com/aghontpi/Rinku-Backend/blob/master/LICENSE
+[badge]: https://img.shields.io/github/v/release/aghontpi/Rinku-Backend?include_prereleases&style=flat-square
+[release link]: https://github.com/aghontpi/Rinku-Backend/releases
 
 
 ## Features
@@ -19,7 +19,7 @@
 - Includes google Recaptcha (configurable, can be turned off/on)
 - Get log of download files
 
-## checkout the [FrontEnd](https://github.com/Gopinath001/Rinku-Frontend) written in React 
+## checkout the [FrontEnd](https://github.com/aghontpi/Rinku-Frontend) written in React 
 
 ## Built with
 
@@ -95,7 +95,7 @@ mysql-container's lib files are mounted under "Docker/.mysql" to maintain persis
 
 ignore above in watchers & .gitignore
 
-For more, use [README](https://github.com/Gopinath001/Rinku-Backend/blob/master/Docker/README.MD) inside "Docker/" folder.
+For more, use [README](https://github.com/aghontpi/Rinku-Backend/blob/master/Docker/README.MD) inside "Docker/" folder.
 
 ## Security
 
