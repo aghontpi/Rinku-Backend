@@ -97,6 +97,17 @@ ignore above in watchers & .gitignore
 
 For more, use [README](https://github.com/Gopinath001/Rinku-Backend/blob/master/Docker/README.MD) inside "Docker/" folder.
 
+
+## Recommend for development: running with vscode remote Container
+
+Start php contaniner with vscode remote container feature,
+
+Change working directory to /var/www/html/
+
+install xdebug [instructions here](https://github.com/Gopinath001/Rinku-Backend/blob/master/Docker/README.MD)
+
+end - hassle free setup 
+
 ## Security
 
 Remove "Access-Control-Allow-Origin: http://localhost:3000" from the whole project. Its not removed 
