@@ -69,8 +69,10 @@ class downloadLogs extends module{
         $prepedSql->execute();
         if ($prepedSql->rowCount() >  0){
             $linksSelect = $prepedSql->fetchAll(PDO::FETCH_ASSOC);
-            $this->respSuccessTemplate["logs"]["list"] = 
+            $this->respSuccessTemplate["content"]["list"] = 
                 json_encode($linksSelect);
+            $count = ($this->database->query("SELECT COUNT(*) FROM download_log"))->fetchColumn();
+            $this->respSuccessTemplate["content"]["total"] = $count; 
             $this->response = $this->respSuccessTemplate;
         } else {
             $this->repFailTemplate["errors"]['errMsg']

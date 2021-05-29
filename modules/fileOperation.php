@@ -49,6 +49,8 @@ class fileOperation extends module{
         
         foreach($dirIterator as $iteratorItem){
             $fileName = $iteratorItem->getFilename();
+            // remove the folder path, only show the contents of the path
+            $fileName = str_replace($dir,'',$fileName);
             if ($fileName == "." || $fileName == "..") { continue; }
             $relativePath = $iteratorItem->getPathname();
             if($relativePath[0] == "."){ $relativePath = ltrim($relativePath,".");}
