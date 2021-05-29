@@ -41,24 +41,30 @@ class managelinks extends module{
         $limitCondition = " " . ($limit - 10) . ", 10";
         $prepedSql = $this->database->prepare(
             "SELECT 
-                download_name,path_of_file,status
+                download_name,path_of_file,status, download_id as id
             FROM 
                 download_details
             ORDER BY 
                 download_id ASC LIMIT " 
             . $limitCondition
         );
+       
         $prepedSql->execute();
         if ($prepedSql->rowCount() >  0){
             $linksSelect = $prepedSql->fetchAll(PDO::FETCH_ASSOC);
             $this->respSuccessTemplate["content"]["list"] = 
                 json_encode($linksSelect);
+            // total limit of the table
+            $rows = $this->database->query("SELECT COUNT(*) FROM download_details")->fetchColumn();
+            $this->respSuccessTemplate["content"]["limit"] = max(0, $rows);
             $this->response = $this->respSuccessTemplate;
         } else {
             $this->repFailTemplate["errors"]['errMsg']
             = "sorry, End of the list reached";
-        $this->response = $this->repFailTemplate;
+            $this->response = $this->repFailTemplate;
         }
+
+
         return $this;
     }
 
@@ -69,7 +75,7 @@ class managelinks extends module{
             SET
                 status = :status
             WHERE 
-                download_name = :id 
+                download_id = :id 
         ");
         if($preparedSql->execute(['status'=>$status, 'id'=>$id])){
             $this->respSuccessTemplate["content"]["status"]

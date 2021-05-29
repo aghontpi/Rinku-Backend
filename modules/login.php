@@ -67,15 +67,15 @@ class login extends module {
             "SELECT * FROM user_details WHERE user_name = :uname " . 
             "AND email_id_status = 'Y' AND status = 'Y'"
         );
-        $preparedSql->execute([':uname'=>$this->inputs['uname'][0]]);
+        $preparedSql->execute([':uname'=>$this->inputs['uname']]);
         self::$userDetails = $preparedSql->fetch(PDO::FETCH_ASSOC);
-        return password_verify($this->inputs["pword"][0], self::$userDetails['user_password']);
+        return password_verify($this->inputs["pword"], self::$userDetails['user_password']);
     }
 
     // user not present
     private function checkUserInDb(){
         $preparedSql = $this->database->prepare("SELECT 1 FROM `user_details` WHERE `user_name` = :uname");
-        $preparedSql->execute([':uname'=>$this->inputs['uname'][0]]);
+        $preparedSql->execute([':uname'=>$this->inputs['uname']]);
         return ($preparedSql->rowCount() > 0);
     } 
 

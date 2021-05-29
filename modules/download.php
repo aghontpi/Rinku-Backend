@@ -102,7 +102,7 @@ class download extends module{
         if ($preparedSql->rowCount() == 1){
             $fileDetailsDB = $preparedSql->fetch(PDO::FETCH_ASSOC);
             $fileInfo['downloadName'] = $fileDetailsDB['download_name'];
-            $this->respSuccessTemplate["content"]["file"] = $fileInfo;
+            $this->respSuccessTemplate["content"] = $fileInfo;
         } else {
             $this->respSuccessTemplate["content"]["file"] = 
                "id not yet generated";
