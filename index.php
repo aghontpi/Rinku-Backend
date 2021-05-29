@@ -18,7 +18,7 @@ unset($cors);
 
 if($_SERVER['REQUEST_METHOD'] == 'OPTIONS'){
     header("Access-Control-Allow-Origin: " . $_SERVER['cors']['Access-Control-Allow-Origin'] );
-    header("Access-Control-Allow-Headers: Content-Type, origin");
+    header("Access-Control-Allow-Headers: Content-Type, OPTIONS, GET, POST");
     header("Access-Control-Allow-Credentials: true");
     header("HTTP/1.1 200 ");
     exit;
