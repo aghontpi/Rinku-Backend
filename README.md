@@ -97,7 +97,7 @@ ignore above in watchers & .gitignore
 
 For more, use [README](https://github.com/aghontpi/Rinku-Backend/blob/master/Docker/README.MD) inside "Docker/" folder.
 
-**Once docker-compose is up, navigate to [http://localhost:8080/?server=database&username=root&db=backend_db](http://localhost:8080/?server=database&username=root&db=backend_db) to view the database in adminer.
+**Once docker-compose is up, navigate to [http://localhost:8080/?server=database&username=root&db=backend_db](http://localhost:8080/?server=database&username=root&db=backend_db) to view the database in adminer.**
 
 ## Recommend for development: running with vscode remote Container
 
