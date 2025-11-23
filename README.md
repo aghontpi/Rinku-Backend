@@ -1,131 +1,88 @@
 # Rinku-Backend
 
-> Create/manage download links for filesystems, Re-captcha, analytics,& download log for downloaded files,
+> Backend service for creating and tracking shareable download links with built-in analytics, logging, and optional Google reCAPTCHA enforcement.
 
-[![release][badge]][release link] [![license][license-badge]][license file]
+[![release][badge]][release link] [![license][license-badge]][license file] [![docker tag][docker-badge]][docker hub]
 
 [license-badge]: https://img.shields.io/github/license/aghontpi/Rinku-Backend?style=flat-square
 [license file]: https://github.com/aghontpi/Rinku-Backend/blob/master/LICENSE
 [badge]: https://img.shields.io/github/v/release/aghontpi/Rinku-Backend?include_prereleases&style=flat-square
 [release link]: https://github.com/aghontpi/Rinku-Backend/releases
+[docker-badge]: https://img.shields.io/docker/v/bluepie/rinku?logo=docker&style=flat-square&sort=semver
+[docker hub]: https://hub.docker.com/repository/docker/bluepie/rinku
 
+## Why Rinku?
 
-## Features
+- Generate expirable download links for any file tree and share a clean landing page per asset.
+- Track downloads, IP/location metadata, and high-level trends without extra tooling.
+- Gate sensitive downloads with configurable reCAPTCHA and session-based auth.
+- Deploy the full stack as a single Docker image or run the lightweight PHP framework directly.
 
-- Create download link for any files
-- Manage all the download links
-- Download page for files is seperate
-- Get analytics of the download statistics
-- Includes google Recaptcha (configurable, can be turned off/on)
-- Get log of download files
+## Feature Highlights
 
-## checkout the [FrontEnd](https://github.com/aghontpi/Rinku-Frontend) written in React 
+- Download link CRUD, per-link landing page, and aggregated stats/logs.
+- Toggleable Google reCAPTCHA (enable/disable or swap secrets per environment).
+- Self-maintained PHP 7 mini-framework, no Composer dependency sprawl.
+- Docker support: `docker-compose` for dev, single image for prod.
+- Adminer bundled for quick DB inspection at `http://localhost:8080` when using compose.
 
-## Built with
+UI is here: [React front end](https://github.com/aghontpi/Rinku-Frontend).
 
-- php 7
-- Famework
-    - created from scratch, that is very simple to use
-- Docker
-- reCAPTCHA - google
+## Quick Start
 
-## Folder structure
-
-
-- Docker-compose which utilizes 3 docker containers
-- Docker/
-    - php
-    - mysql
-    - adminer
-        
-- mysql setup files
-    - Docker/mysql/dbinit/
-
-
-## Documentation
-
-Set the path, make sure the path mentioned has appropriate permission.
-
-```php
-
-server/interfaces/config.php
-   
-    const path = ".";
-    const host = "database_host_name_here";
-    const database = "database_name_here";
-    const user = "user_database";
-    const password = "password_database";
-    const captcha = "enable";
-    const secret = "secret_here"; // only matters if captcha is enabled
-    const domain = "domain_to_verify_captcha"; // only matters if captcha is enabled
-
-```
-
-## Running Natively
-
-create mysql database, import the following file
-
-```bash
-
-Docker/mysql/dbinit/tables.sql
-
-# credentials for default user to login
-# username: testuser
-# password: 123456
-
-```
-
-## Run with Docker
-
-### Server
-
-You must have Docker with docker-compose installed.
-
-
-```bash
-
-docker-compose up
-
-```
-note: 
-
-project-path is mounted
-
-mysql-container's lib files are mounted under "Docker/.mysql" to maintain persistence.
-
-ignore above in watchers & .gitignore
-
-For more, use [README](https://github.com/aghontpi/Rinku-Backend/blob/master/Docker/README.MD) inside "Docker/" folder.
-
-**Once docker-compose is up, navigate to [http://localhost:8080/?server=database&username=root&db=backend_db](http://localhost:8080/?server=database&username=root&db=backend_db) to view the database in adminer.**
-
-## Production Build (Single Image)
-
-This project can be built into a single Docker image that contains both the PHP application and the MariaDB database.
-
-Docker Hub image: [bluepie/rinku](https://hub.docker.com/repository/docker/bluepie/rinku/general)
-
-### Pull from Docker Hub
-
+### Run with Docker (recommended)
 ```bash
 docker pull bluepie/rinku:latest
+docker run -d -p 80:80 --name rinku \
+    -e DB_NAME=backend_db -e DB_USER=user -e DB_PASS=user \
+    bluepie/rinku:latest
+```
+- `bluepie/rinku:v1.2.0` is a multi-arch tag (linux/amd64 and linux/arm64) if you prefer pinning to the release referenced by the Docker badge above.
+- Mount your files directory with `-v /host/files:/data -e FILES_PATH=/data`.
+- Need DB access? Compose stack exposes Adminer: `docker-compose up` then visit [http://localhost:8080/?server=database&username=root&db=backend_db](http://localhost:8080/?server=database&username=root&db=backend_db).
+
+### Run natively
+1. Create a MySQL database and import `Docker/mysql/dbinit/tables.sql` (default user: `testuser` / `123456`).
+2. Update `server/interfaces/config.php` with your filesystem path and credentials.
+3. Serve `index.php` behind Apache/Nginx/PHP built-in server.
+
+## Configuration
+
+Edit `server/interfaces/config.php` (make sure the target directories are writable):
+
+```php
+const path = ".";                         // Directory containing downloadable files
+const host = "database_host_name_here";    // DB host or container name
+const database = "database_name_here";
+const user = "user_database";
+const password = "password_database";
+const captcha = "enable";                  // enable|disable reCAPTCHA enforcement
+const secret = "secret_here";              // Only used when captcha === enable
+const domain = "domain_to_verify_captcha"; // Expected host sent to Google
 ```
 
-### Build
+Image-based deployments use environment variables instead (see table below).
 
+## Docker Image Reference
+
+The published image bundles PHP-FPM, nginx, and MariaDB so you can drop it onto any host. Source Docker assets live under `Docker/` if you need to extend it.
+All `v1.2.0+` tags pushed to Docker Hub are manifest lists covering both `linux/amd64` and `linux/arm64`.
+
+### Build or pull
 ```bash
+# Pull
+docker pull bluepie/rinku:latest
+
+# Build locally
 docker build -t bluepie/rinku:latest .
 ```
 
 ### Run
-
 ```bash
 docker run -d -p 80:80 bluepie/rinku:latest
 ```
 
-### Use a custom files directory
-Bind-mount the folder that holds downloadable assets and point the container to it via `FILES_PATH`:
-
+### Bind a custom files directory
 ```bash
 docker run -d -p 80:80 \
     -v /absolute/host/files:/data \
@@ -133,22 +90,20 @@ docker run -d -p 80:80 \
     bluepie/rinku:latest
 ```
 
-### Available environment variables
+### Environment variables
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `DB_NAME` | `backend_db` | Database schema name created during container init. |
-| `DB_USER` | `user` | Application DB user created inside MariaDB. |
+| `DB_NAME` | `backend_db` | Schema created during container init. |
+| `DB_USER` | `user` | Application DB user inside MariaDB. |
 | `DB_PASS` | `user` | Password for `DB_USER`. |
-| `DB_ROOT_PASS` | `root` | Root password set after initialization; used only inside the container. |
-| `FILES_PATH` | `.` | Base directory for downloadable files. Point this to a bind-mounted host folder. |
-| `CAPTCHA_ENABLE` | `disable` | Set to `enable` to force ReCaptcha validation for `login`/`download`. |
-| `CAPTCHA_SECRET` | `secret` | Google ReCaptcha secret token. |
-| `CAPTCHA_DOMAIN` | `localhost` | Hostname expected by ReCaptcha. |
+| `DB_ROOT_PASS` | `root` | Internal root password (used by init scripts). |
+| `FILES_PATH` | `.` | Base directory scanned for downloads. Mount a host path and point this here. |
+| `CAPTCHA_ENABLE` | `disable` | Set to `enable` to require Google reCAPTCHA. |
+| `CAPTCHA_SECRET` | `secret` | reCAPTCHA secret token. |
+| `CAPTCHA_DOMAIN` | `localhost` | Hostname validated by reCAPTCHA. |
 
-### Deploy via Docker Hub image
-1. Pull the image (or rely on automatic pull during `docker run`).
-2. Start the container, optionally supplying database credentials, captcha values, and a bind-mounted files directory:
+Deployment recipe:
 
 ```bash
 docker run -d -p 80:80 --name rinku-prod \
@@ -163,19 +118,26 @@ docker run -d -p 80:80 --name rinku-prod \
     bluepie/rinku:latest
 ```
 
-3. Visit `http://<host>:80` to access the API (use the curl recipes in `API_TESTS.md`).
+## Project Layout
 
-## Recommend for development: running with vscode remote Container
+- `modules/` – endpoint handlers loaded by `server/classes/request.php`.
+- `classes/` & `abstract/` – internal framework scaffolding (database singleton, response helpers, module base class).
+- `Docker/` – docker-compose, per-service Dockerfiles, SQL bootstrap scripts (`Docker/mysql/dbinit/`).
+- `API_TESTS.md` – curl snippets for every endpoint.
 
-Start php contaniner with vscode remote container feature,
+## Development Tips
 
-Change working directory to /var/www/html/
+- Use VS Code Remote Containers to open the PHP container directly (`/var/www/html/`); install Xdebug via [`Docker/README.MD`](Docker/README.MD) for breakpoint debugging.
+- Ignore `Docker/.mysql` in watchers and version control; it stores persisted database files for local compose runs.
 
-install xdebug [instructions here](https://github.com/Gopinath001/Rinku-Backend/blob/master/Docker/README.MD)
+## Security Footnotes
 
-end - hassle free setup 
+- The sample CORS header (`Access-Control-Allow-Origin: http://localhost:3000`) exists only for React dev convenience—remove or tighten it in production.
 
-## Security
+---
 
-Remove "Access-Control-Allow-Origin: http://localhost:3000" from the whole project. Its not removed 
-to support development with react.
+For GUI, deployment guidance, or API samples? See `API_TESTS.md`, `Docker/README.MD`, or the [Rinku Frontend](https://github.com/aghontpi/Rinku-Frontend) repository.
+
+## License
+
+Distributed under the [Apache License 2.0](LICENSE). See the `LICENSE` file for full text and attribution requirements.
