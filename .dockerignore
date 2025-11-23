@@ -1,0 +1,8 @@
+.git
+.gitignore
+.github
+docker-compose.yml
+README.md
+LICENSE
+Docker
+!Docker/mysql/dbinit/tables.sql

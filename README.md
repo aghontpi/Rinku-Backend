@@ -99,6 +99,32 @@ For more, use [README](https://github.com/aghontpi/Rinku-Backend/blob/master/Doc
 
 **Once docker-compose is up, navigate to [http://localhost:8080/?server=database&username=root&db=backend_db](http://localhost:8080/?server=database&username=root&db=backend_db) to view the database in adminer.**
 
+## Production Build (Single Image)
+
+This project can be built into a single Docker image that contains both the PHP application and the MariaDB database.
+
+### Build
+
+```bash
+docker build -t bluepie/rinku:latest .
+```
+
+### Run
+
+```bash
+docker run -d -p 80:80 bluepie/rinku:latest
+```
+
+### Use a custom files directory
+Bind-mount the folder that holds downloadable assets and point the container to it via `FILES_PATH`:
+
+```bash
+docker run -d -p 80:80 \
+    -v /absolute/host/files:/data \
+    -e FILES_PATH=/data \
+    bluepie/rinku:latest
+```
+
 ## Recommend for development: running with vscode remote Container
 
 Start php contaniner with vscode remote container feature,
