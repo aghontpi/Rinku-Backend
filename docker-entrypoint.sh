@@ -54,6 +54,8 @@ if ! mysql -e "USE $DB_NAME" 2>/dev/null; then
     mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_ROOT_PASS';"
     
     echo "Database initialized."
+    
+    echo "Database initialized."
 else
     echo "Database already exists."
 fi

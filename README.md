@@ -103,6 +103,14 @@ For more, use [README](https://github.com/aghontpi/Rinku-Backend/blob/master/Doc
 
 This project can be built into a single Docker image that contains both the PHP application and the MariaDB database.
 
+Docker Hub image: [bluepie/rinku](https://hub.docker.com/repository/docker/bluepie/rinku/general)
+
+### Pull from Docker Hub
+
+```bash
+docker pull bluepie/rinku:latest
+```
+
 ### Build
 
 ```bash
@@ -124,6 +132,38 @@ docker run -d -p 80:80 \
     -e FILES_PATH=/data \
     bluepie/rinku:latest
 ```
+
+### Available environment variables
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `DB_NAME` | `backend_db` | Database schema name created during container init. |
+| `DB_USER` | `user` | Application DB user created inside MariaDB. |
+| `DB_PASS` | `user` | Password for `DB_USER`. |
+| `DB_ROOT_PASS` | `root` | Root password set after initialization; used only inside the container. |
+| `FILES_PATH` | `.` | Base directory for downloadable files. Point this to a bind-mounted host folder. |
+| `CAPTCHA_ENABLE` | `disable` | Set to `enable` to force ReCaptcha validation for `login`/`download`. |
+| `CAPTCHA_SECRET` | `secret` | Google ReCaptcha secret token. |
+| `CAPTCHA_DOMAIN` | `localhost` | Hostname expected by ReCaptcha. |
+
+### Deploy via Docker Hub image
+1. Pull the image (or rely on automatic pull during `docker run`).
+2. Start the container, optionally supplying database credentials, captcha values, and a bind-mounted files directory:
+
+```bash
+docker run -d -p 80:80 --name rinku-prod \
+    -e DB_NAME=backend_db \
+    -e DB_USER=user \
+    -e DB_PASS=user \
+    -e CAPTCHA_ENABLE=enable \
+    -e CAPTCHA_SECRET=your-recaptcha-secret \
+    -e CAPTCHA_DOMAIN=downloads.example.com \
+    -e FILES_PATH=/data \
+    -v /srv/rinku-files:/data \
+    bluepie/rinku:latest
+```
+
+3. Visit `http://<host>:80` to access the API (use the curl recipes in `API_TESTS.md`).
 
 ## Recommend for development: running with vscode remote Container
 
